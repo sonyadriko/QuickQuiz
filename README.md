@@ -49,6 +49,7 @@
 ---
 
 ##📂 Struktur Direktori
+```bash
 quick-quiz/
 ├── index.html         # Halaman utama kuis
 ├── end.html           # Halaman akhir kuis
