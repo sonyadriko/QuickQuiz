@@ -7,7 +7,6 @@
     <title>Quick Quiz - End</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="style.css"> -->
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -76,7 +75,7 @@
         />
         <button id="saveScoreBtn" class="btn btn-primary w-100" disabled>Save Highscore</button>
         <a href="index.html" class="btn btn-secondary w-100">Go to Home</a>
-        <h2>High Scores</h2>
+        <h2 style="margin-top: 20px;">High Scores</h2>
         <ul id="highscoresList" class="highscores-list list-unstyled">
             <!-- High scores dynamically added here -->
         </ul>
@@ -88,37 +87,48 @@
         const saveScoreBtn = document.getElementById("saveScoreBtn");
         const highscoresList = document.getElementById("highscoresList");
 
-        const MAX_HIGHSCORES = 5;
-        const latestScore = localStorage.getItem("latestScore");
-        const highscores = JSON.parse(localStorage.getItem("highscores")) || [];
+        const MAX_HIGHSCORES = 10;
 
-        // Display the latest score
+        // Ambil skor dari URL query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const scoreFromQuery = urlParams.get("score");
+
+        // Simpan skor ke localStorage jika ada di query string
+        if (scoreFromQuery) {
+            localStorage.setItem("latestScore", scoreFromQuery);
+        }
+
+        const latestScore = localStorage.getItem("latestScore") || 0;
+
+        // Tampilkan skor terakhir
         finalScoreElement.textContent = latestScore;
 
-        // Enable save button if username is entered
+        // Enable tombol simpan jika nama dimasukkan
         usernameElement.addEventListener("input", () => {
             saveScoreBtn.disabled = !usernameElement.value;
         });
 
-        // Save high score
+        // Simpan skor ke localStorage
         saveScoreBtn.addEventListener("click", () => {
             const score = {
-                score: latestScore,
+                score: parseInt(latestScore),
                 name: usernameElement.value,
             };
 
+            const highscores = JSON.parse(localStorage.getItem("highscores")) || [];
             highscores.push(score);
             highscores.sort((a, b) => b.score - a.score);
             highscores.splice(MAX_HIGHSCORES);
 
             localStorage.setItem("highscores", JSON.stringify(highscores));
             displayHighscores();
-            usernameElement.value = ""; // Clear input
-            saveScoreBtn.disabled = true; // Disable save button
+            usernameElement.value = ""; // Bersihkan input
+            saveScoreBtn.disabled = true; // Nonaktifkan tombol simpan
         });
 
-        // Display high scores
+        // Tampilkan skor tinggi
         function displayHighscores() {
+            const highscores = JSON.parse(localStorage.getItem("highscores")) || [];
             highscoresList.innerHTML = highscores
                 .map(
                     (score) =>
@@ -127,7 +137,7 @@
                 .join("");
         }
 
-        // Load high scores on page load
+        // Load skor tinggi saat halaman dimuat
         displayHighscores();
     </script>
 </body>
